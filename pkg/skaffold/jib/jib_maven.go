@@ -29,6 +29,7 @@ import (
 
 // Skaffold-Jib depends on functionality introduced with Jib-Maven 1.4.0
 const MinimumJibMavenVersion = "1.4.0"
+const JibPluginRef = "com.google.cloud.tools:jib-maven-plugin"
 
 // MavenCommand stores Maven executable and wrapper name
 var MavenCommand = util.CommandWrapper{Executable: "mvn", Wrapper: "mvnw"}
@@ -46,7 +47,7 @@ func getDependenciesMaven(ctx context.Context, workspace string, a *latest.JibAr
 
 func getCommandMaven(ctx context.Context, workspace string, a *latest.JibArtifact) exec.Cmd {
 	args := mavenArgs(a)
-	args = append(args, "jib:_skaffold-files-v2", "--quiet")
+	args = append(args, JibPluginRef+":_skaffold-files-v2", "--quiet")
 
 	return MavenCommand.CreateCommand(ctx, workspace, args)
 }
@@ -64,10 +65,10 @@ func GenerateMavenArgs(goal string, imageName string, a *latest.JibArtifact, ski
 
 	if a.Project == "" {
 		// single-module project
-		args = append(args, "prepare-package", "jib:"+goal)
+		args = append(args, "prepare-package", JibPluginRef+":"+goal)
 	} else {
 		// multi-module project: instruct jib to containerize only the given module
-		args = append(args, "package", "jib:"+goal, "-Djib.containerize="+a.Project)
+		args = append(args, "package", JibPluginRef+":"+goal, "-Djib.containerize="+a.Project)
 	}
 
 	if insecure, err := isOnInsecureRegistry(imageName, insecureRegistries); err == nil && insecure {
@@ -80,7 +81,7 @@ func GenerateMavenArgs(goal string, imageName string, a *latest.JibArtifact, ski
 }
 
 func mavenArgs(a *latest.JibArtifact) []string {
-	args := []string{"jib:_skaffold-fail-if-jib-out-of-date", "-Djib.requiredVersion=" + MinimumJibMavenVersion}
+	args := []string{JibPluginRef + ":_skaffold-fail-if-jib-out-of-date", "-Djib.requiredVersion=" + MinimumJibMavenVersion}
 	args = append(args, a.Flags...)
 
 	if a.Project == "" {

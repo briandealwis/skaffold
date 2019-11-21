@@ -18,7 +18,6 @@
 
   <properties>
     <java.version>1.8</java.version>
-    <jib.maven-plugin-version>1.7.0</jib.maven-plugin-version>
   </properties>
 
   <dependencies>
@@ -32,16 +31,4 @@
     <module>project1</module>
     <module>project2</module>
   </modules>
-
-  <build>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>com.google.cloud.tools</groupId>
-          <artifactId>jib-maven-plugin</artifactId>
-          <version>${jib.maven-plugin-version}</version>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-  </build>
 </project>

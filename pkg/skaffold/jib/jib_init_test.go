@@ -97,7 +97,7 @@ BEGIN JIB JSON
 			description:  "jib maven single module",
 			path:         "path/to/pom.xml",
 			fileContents: "<artifactId>jib-maven-plugin</artifactId>",
-			command:      "mvn jib:_skaffold-init -q",
+			command:      "mvn " + JibPluginRef + ":_skaffold-init -q",
 			stdout: `BEGIN JIB JSON
 {"image":"image","project":"project"}`,
 			expectedConfig: []Jib{
@@ -108,7 +108,7 @@ BEGIN JIB JSON
 			description:  "jib maven multi-module",
 			path:         "path/to/pom.xml",
 			fileContents: "<artifactId>jib-maven-plugin</artifactId>",
-			command:      "mvn jib:_skaffold-init -q",
+			command:      "mvn " + JibPluginRef + ":_skaffold-init -q",
 			stdout: `BEGIN JIB JSON
 {"image":"image","project":"project1"}
 
