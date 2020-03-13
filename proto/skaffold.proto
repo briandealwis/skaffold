@@ -141,15 +141,16 @@ message FileSyncEvent {
 
 // DebuggingContainerEvent is raised when a debugging container is started or terminated
 message DebuggingContainerEvent {
-  string status = 1; // the container status oneof: Started, Terminated
-  string podName = 2; // the pod name with the debugging container
-  string containerName = 3; // the name of the container configured for debugging
-  string namespace = 4; // the namespace of the debugging container
+    string status = 1; // the container status oneof: Started, Terminated
+    string podName = 2; // the pod name with the debugging container
+    string containerName = 3; // the name of the container configured for debugging
+    string namespace = 4; // the namespace of the debugging container
 
-  string artifact = 5; // the corresponding artifact's image name
-  string runtime = 6; // the detected language runtime
-  string workingDir = 7; // the working directory in the container image
-  map<string,uint32> debugPorts = 8; // the exposed debugging-related ports
+    string artifact = 5; // the corresponding artifact's image name
+    string runtime = 6; // the detected language runtime
+    string workingDir = 7; // the working directory in the container image
+    map<string,uint32> debugPorts = 8; // the exposed debugging-related ports
+    repeated string appRoots = 9; // the application roots in the container image
 }
 
 // LogEntry describes an event and a string description of the event.

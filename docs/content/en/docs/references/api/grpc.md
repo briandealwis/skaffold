@@ -113,6 +113,7 @@ DebuggingContainerEvent is raised when a debugging container is started or termi
 | runtime | [string](#string) |  | the detected language runtime |
 | workingDir | [string](#string) |  | the working directory in the container image |
 | debugPorts | [DebuggingContainerEvent.DebugPortsEntry](#proto.DebuggingContainerEvent.DebugPortsEntry) | repeated | the exposed debugging-related ports |
+| appRoots | [string](#string) | repeated | the application roots in the container image |
 
 
 

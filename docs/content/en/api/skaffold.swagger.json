@@ -238,6 +238,16 @@
             "type": "string"
           },
           {
+            "name": "event.debuggingContainerEvent.appRoots",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
             "name": "entry",
             "in": "query",
             "required": false,
@@ -396,6 +406,12 @@
           "additionalProperties": {
             "type": "integer",
             "format": "int64"
+          }
+        },
+        "appRoots": {
+          "type": "array",
+          "items": {
+            "type": "string"
           }
         }
       },

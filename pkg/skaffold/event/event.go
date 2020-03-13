@@ -276,7 +276,7 @@ func PortForwarded(localPort, remotePort int32, podName, containerName, namespac
 }
 
 // DebuggingContainerStarted notifies that a debuggable container has appeared.
-func DebuggingContainerStarted(podName, containerName, namespace, artifact, runtime, workingDir string, debugPorts map[string]uint32) {
+func DebuggingContainerStarted(podName, containerName, namespace, artifact, runtime, workingDir string, debugPorts map[string]uint32, appRoots []string) {
 	go handler.handle(&proto.Event{
 		EventType: &proto.Event_DebuggingContainerEvent{
 			DebuggingContainerEvent: &proto.DebuggingContainerEvent{
@@ -288,6 +288,7 @@ func DebuggingContainerStarted(podName, containerName, namespace, artifact, runt
 				Runtime:       runtime,
 				WorkingDir:    workingDir,
 				DebugPorts:    debugPorts,
+				AppRoots:      appRoots,
 			},
 		},
 	})
