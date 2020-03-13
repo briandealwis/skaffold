@@ -32,6 +32,8 @@ import (
 	"github.com/GoogleContainerTools/skaffold/pkg/skaffold/deploy/kubectl"
 	"github.com/GoogleContainerTools/skaffold/pkg/skaffold/docker"
 	"github.com/GoogleContainerTools/skaffold/pkg/skaffold/runner/runcontext"
+	"github.com/GoogleContainerTools/skaffold/pkg/skaffold/sync"
+	"github.com/GoogleContainerTools/skaffold/pkg/skaffold/util"
 )
 
 var (
@@ -112,16 +114,42 @@ func retrieveImageConfiguration(ctx context.Context, artifact *build.Artifact, i
 		return imageConfiguration{}, errors.Wrapf(err, "retrieving image config for %q", artifact.Tag)
 	}
 
+	appRoots := determineAppRoots(artifact, insecureRegistries)
+
 	config := manifest.Config
 	logrus.Debugf("Retrieved local image configuration for %v: %v", artifact.Tag, config)
 	return imageConfiguration{
 		artifact:   artifact.ImageName,
+		appRoots:   appRoots,
 		env:        envAsMap(config.Env),
 		entrypoint: config.Entrypoint,
 		arguments:  config.Cmd,
 		labels:     config.Labels,
 		workingDir: config.WorkingDir,
 	}, nil
+}
+
+func determineAppRoots(artifact *build.Artifact, insecureRegistries map[string]bool) []string {
+	// TODO: hook in artifact-type specific means of determining the application root
+	// For example, jib typically uses `/app`, and buildpacks uses $CNB_APP_DIR (default `/workspace`) 
+	 
+	// syncMap is a map of local source locations to remote destinations (possibly multiple)
+	syncMap, err := sync.SyncMap(&artifact.Config, insecureRegistries)
+	if err != nil {
+		logrus.Warnf("unable to obtain sync map for %s: %v", artifact.ImageName, err)
+		return nil
+	}
+	// TODO: we could try to process the sync-map to build a list of local -> remote roots
+	// but it's significantly more complex'
+	remoteFiles := []string{}
+	for _, r := range syncMap {
+		for _, rf := range r {
+			remoteFiles = append(remoteFiles, rf)
+		}
+	}
+	// TODO: we assume containers are linux-based
+	remoteRoots := util.CommonRoots(remoteFiles, 1, "linux")
+	return remoteRoots
 }
 
 // envAsMap turns an array of environment "NAME=value" strings into a map

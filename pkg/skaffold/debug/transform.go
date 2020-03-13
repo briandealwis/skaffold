@@ -76,6 +76,8 @@ type ContainerDebugConfiguration struct {
 	WorkingDir string `json:"workingDir,omitempty"`
 	// Ports is the list of debugging ports, keyed by protocol type
 	Ports map[string]uint32 `json:"ports,omitempty"`
+	// AppRoots is the list of application locations in the container image
+	AppRoots []string `json:"appRoots,omitempty"`
 }
 
 // portAllocator is a function that takes a desired port and returns an available port
@@ -90,6 +92,7 @@ type configurationRetriever func(string) (imageConfiguration, error)
 type imageConfiguration struct {
 	// artifact is the corresponding artifact's image name (`pkg/skaffold/build.Artifact.ImageName`)
 	artifact string
+	appRoots []string
 
 	labels     map[string]string
 	env        map[string]string
@@ -199,6 +202,7 @@ func transformPodSpec(metadata *metav1.ObjectMeta, podSpec *v1.PodSpec, retrieve
 		if configuration, requiredImage, err := transformContainer(container, imageConfig, portAlloc); err == nil {
 			configuration.Artifact = imageConfig.artifact
 			configuration.WorkingDir = imageConfig.workingDir
+			configuration.AppRoots = imageConfig.appRoots
 			configurations[container.Name] = *configuration
 			if len(requiredImage) > 0 {
 				logrus.Infof("%q requires debugging support image %q", container.Name, requiredImage)

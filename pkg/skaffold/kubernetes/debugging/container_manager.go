@@ -130,7 +130,8 @@ func (d *ContainerManager) checkPod(_ context.Context, pod *v1.Pod) {
 					config.Artifact,
 					config.Runtime,
 					config.WorkingDir,
-					config.Ports)
+					config.Ports,
+					config.AppRoots)
 
 			case c.State.Terminated != nil && seen:
 				delete(d.active, key)
