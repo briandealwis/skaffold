@@ -98,7 +98,7 @@ func runBuild(ctx context.Context, cw io.WriteCloser, tags tag.ImageTags, artifa
 		results.Store(artifact.ImageName, err)
 	} else {
 		event.BuildComplete(artifact.ImageName)
-		artifact := Artifact{ImageName: artifact.ImageName, Tag: finalTag}
+		artifact := Artifact{ImageName: artifact.ImageName, Tag: finalTag, Config: *artifact}
 		results.Store(artifact.ImageName, artifact)
 	}
 	cw.Close()

@@ -114,6 +114,7 @@ func (c *cache) Build(ctx context.Context, out io.Writer, tags tag.ImageTags, ar
 		alreadyBuilt = append(alreadyBuilt, build.Artifact{
 			ImageName: artifact.ImageName,
 			Tag:       uniqueTag,
+			Config:    *artifact,
 		})
 	}
 

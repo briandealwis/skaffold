@@ -28,6 +28,7 @@ import (
 type Artifact struct {
 	ImageName string `json:"imageName"`
 	Tag       string `json:"tag"`
+	Config    latest.Artifact `json:"-"`
 }
 
 // Builder is an interface to the Build API of Skaffold.
