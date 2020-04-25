@@ -41,16 +41,17 @@ const (
 
 // dlvSpec captures the useful delve runtime options
 type dlvSpec struct {
-	mode       string
-	host       string
-	port       uint16
-	headless   bool
-	log        bool
-	apiVersion int
+	mode         string
+	host         string
+	port         uint16
+	headless     bool
+	log          bool
+	apiVersion   int
+	onlySameUser bool
 }
 
 func newDlvSpec(port uint16) dlvSpec {
-	return dlvSpec{mode: "exec", host: "localhost", port: port, apiVersion: defaultAPIVersion, headless: true}
+	return dlvSpec{mode: "exec", host: "localhost", port: port, apiVersion: defaultAPIVersion, headless: true, onlySameUser: false}
 }
 
 // isLaunchingDlv determines if the arguments seems to be invoking Delve
@@ -118,7 +119,8 @@ func extractDlvSpec(args []string) *dlvSpec {
 	if !isLaunchingDlv(args) {
 		return nil
 	}
-	spec := dlvSpec{apiVersion: 2, log: false, headless: false}
+	// the delve defaults
+	spec := dlvSpec{apiVersion: 2, onlySameUser: true}
 arguments:
 	for _, arg := range args {
 		switch {
@@ -149,6 +151,8 @@ arguments:
 			address := strings.SplitN(arg, "=", 2)[1]
 			version, _ := strconv.ParseInt(address, 10, 16)
 			spec.apiVersion = int(version)
+		case arg == "--only-same-user" || strings.HasPrefix(arg, "--only-same-user="):
+			spec.onlySameUser = !strings.HasSuffix(arg, "=false")
 		}
 	}
 	return &spec
@@ -187,6 +191,9 @@ func (spec dlvSpec) asArguments() []string {
 	}
 	if spec.log {
 		args = append(args, "--log")
+	}
+	if !spec.onlySameUser {
+		args = append(args, "--only-same-user=false")
 	}
 	return args
 }
