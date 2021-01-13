@@ -226,7 +226,7 @@ integration-in-k3d: skaffold-builder
 		docker network create k3d -o "com.docker.network.driver.mtu=$$MTU" )
 	# instruct k3d to attach its containers to a specific network
 	docker run --rm \
-		--network="host" \
+		--network="k3d" \
 		-v /var/run/docker.sock:/var/run/docker.sock \
 		-v $(HOME)/.gradle:/root/.gradle \
 		-v $(HOME)/.cache:/root/.cache \
