@@ -218,6 +218,9 @@ integration-in-kind: skaffold-builder
 .PHONY: integration-in-k3d
 integration-in-k3d: skaffold-builder
 	echo '{}' > /tmp/docker-config
+	grep . /sys/class/net/*/mtu; echo -----; cat /proc/net/route; echo -----; cat /proc/net/fib_trie; echo -----
+	docker pull rancher/k3d-tools:v3.4.0
+
 	# Custom docker networks are created with mtu 1500 (https://github.com/moby/moby/issues/34981#issuecomment-343616165)
 	# so pull out the MTU from the default network. 
 	# Instruct k3d to use this specific network.
@@ -226,7 +229,7 @@ integration-in-k3d: skaffold-builder
 		docker network create k3d -o "com.docker.network.driver.mtu=$$MTU" )
 	# instruct k3d to attach its containers to a specific network
 	docker run --rm \
-		--network="k3d" \
+		--network="host" \
 		-v /var/run/docker.sock:/var/run/docker.sock \
 		-v $(HOME)/.gradle:/root/.gradle \
 		-v $(HOME)/.cache:/root/.cache \
@@ -236,6 +239,7 @@ integration-in-k3d: skaffold-builder
 		-e IT_PARTITION=$(IT_PARTITION) \
 		gcr.io/$(GCP_PROJECT)/skaffold-builder \
 		sh -eu -c ' \
+			grep . /sys/class/net/*/mtu; echo -----; cat /proc/net/route; echo -----; cat /proc/net/fib_trie; echo -----; \
 			if ! k3d cluster list | grep -q k3s-default; then \
 			  trap "k3d cluster delete" 0 1 2 15; \
 			  TERM=dumb k3d cluster create --network k3d; \
