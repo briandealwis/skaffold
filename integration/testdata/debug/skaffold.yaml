@@ -43,6 +43,9 @@ profiles:
       context: java
       buildpacks:
         builder: "gcr.io/buildpacks/builder:v1"
+        env:
+        # set GOOGLE_DEBUG to show normal maven logs, to see about retries from connection reset
+        - GOOGLE_DEBUG=1
     - image: skaffold-debug-npm
       context: npm
       buildpacks:
