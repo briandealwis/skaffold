@@ -36,17 +36,17 @@ jobs:
 
     - name: Install Kustomize
       run: |
-        wget -O kustomize.tar.gz https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v${{ matrix.kustomize_version }}/kustomize_v${{ matrix.kustomize_version }}_linux_amd64.tar.gz
+        curl -Lo kustomize.tar.gz https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v${{ matrix.kustomize_version }}/kustomize_v${{ matrix.kustomize_version }}_linux_amd64.tar.gz
         sudo tar -xvf kustomize.tar.gz -C /usr/local/bin/
 
     - name: Install Ko
       run: |
-        wget -O ko.tar.gz https://github.com/google/ko/releases/download/v${{ matrix.ko_version }}/ko_${{ matrix.ko_version }}_Linux_x86_64.tar.gz
+        curl -Lo ko.tar.gz https://github.com/google/ko/releases/download/v${{ matrix.ko_version }}/ko_${{ matrix.ko_version }}_Linux_x86_64.tar.gz
         sudo tar -xvf ko.tar.gz -C /usr/local/bin/
 
     - name: Install Kompose
       run: |
-        wget -O kompose https://github.com/kubernetes/kompose/releases/download/v${{ matrix.kompose_version }}/kompose-linux-amd64 && chmod +x kompose
+        curl -Lo kompose https://github.com/kubernetes/kompose/releases/download/v${{ matrix.kompose_version }}/kompose-linux-amd64 && chmod +x kompose
         sudo mv kompose /usr/local/bin/
 
     - name: Configure GCloud with Docker
@@ -54,7 +54,7 @@ jobs:
 
     - name: Install Container Structure Test
       run: |
-        wget -O container-structure-test https://storage.googleapis.com/container-structure-test/v${{ matrix.container_structure_tests_version }}/container-structure-test-linux-amd64 && chmod +x container-structure-test
+        curl -Lo container-structure-test https://storage.googleapis.com/container-structure-test/v${{ matrix.container_structure_tests_version }}/container-structure-test-linux-amd64 && chmod +x container-structure-test
         sudo mv container-structure-test /usr/local/bin/
 
     - name: Setup other files and permissions
