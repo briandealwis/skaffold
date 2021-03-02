@@ -17,7 +17,7 @@ jobs:
         gcloud_sdk_version: [276.0.0]
         kubectl_version: [1.18.0]
         container_structure_tests_version: [1.8.0]
-        minikube_version: [1.12.1]
+        minikube_version: [1.18.0]
         integration_test_partitions: [0, 1, 2, 3]
     steps:
 
