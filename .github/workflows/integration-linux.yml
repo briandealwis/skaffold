@@ -12,7 +12,7 @@ on:
 
 jobs:
   build:
-    name: latest binary integration tests on linux
+    name: integration tests on linux
     runs-on: ubuntu-latest
     strategy:
       matrix:

@@ -12,7 +12,7 @@ on:
 
 jobs:
   build:
-    name: latest binary integration tests on macos
+    name: integration tests on macos
     runs-on: macos-latest
     strategy:
       matrix:
