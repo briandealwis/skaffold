@@ -1,22 +1,23 @@
-name: release (linux)
+name: nightly integration (linux)
 
 on:
   schedule:
   - cron: "0 10 * * *"
+  workflow_dispatch: {}
 
 jobs:
-
   build:
     name: Release binary integration tests
     runs-on: ubuntu-latest
     strategy:
       matrix:
+        # <https://github.com/actions/virtual-environments>
+        # pre-installed on linux: bazel, helm, gcloud-sdk, gradle, maven
         kustomize_version: [3.5.4]
         ko_version: [0.4.0]
         kompose_version: [1.21.0]
-        gcloud_sdk_version: [276.0.0]
         container_structure_tests_version: [1.8.0]
-        minikube_version: [1.18.0]
+        minikube_version: [1.18.0,latest]
         integration_test_partitions: [0, 1, 2, 3]
     steps:
 
@@ -47,13 +48,6 @@ jobs:
       run: |
         wget -O kompose https://github.com/kubernetes/kompose/releases/download/v${{ matrix.kompose_version }}/kompose-linux-amd64 && chmod +x kompose
         sudo mv kompose /usr/local/bin/
-
-    - name: Install GCloud
-      run: |
-        wget -O gcloud.tar.gz https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-${{ matrix.gcloud_sdk_version }}-linux-x86_64.tar.gz
-        sudo tar -xvf gcloud.tar.gz -C /
-        sudo CLOUDSDK_PYTHON="python2.7" /google-cloud-sdk/install.sh --usage-reporting=false --bash-completion=false --disable-installation-options
-        echo "/google-cloud-sdk/bin" >> $GITHUB_PATH
 
     - name: Configure GCloud with Docker
       run:  sudo gcloud auth configure-docker

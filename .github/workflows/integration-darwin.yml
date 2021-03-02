@@ -1,30 +1,31 @@
-name: release (darwin)
+name: nightly integration (darwin)
 
 on:
   schedule:
   - cron: "0 10 * * *"
+  workflow_dispatch: {}
 
 jobs:
-
   build:
     name: Release binary integration tests
     runs-on: macos-latest
     strategy:
       matrix:
-        kustomize_version: [3.5.4]
-        ko_version: [0.4.0]
-        kompose_version: [1.21.0]
-        gcloud_sdk_version: [276.0.0]
+        # <https://github.com/actions/virtual-environments>
+        # pre-installed on macOS: bazel, helm, gradle, maven, virtualbox
+        kustomize_version: [3.8.10]
+        ko_version: [0.8.0]
+        kompose_version: [1.22.0]
         kubectl_version: [1.18.0]
-        container_structure_tests_version: [1.8.0]
-        minikube_version: [1.18.0]
+        container_structure_tests_version: [1.10.0]
+        minikube_version: [1.18.0,latest]
         integration_test_partitions: [0, 1, 2, 3]
     steps:
 
     - name: Set up Go
       uses: actions/setup-go@v2
       with:
-        go-version: ^1.14
+        go-version: ^1.15
       id: go
 
     - name: Check out code into the Go module directory
@@ -41,7 +42,7 @@ jobs:
 
     - name: Install Ko
       run: |
-        wget -O ko.tar.gz https://github.com/google/ko/releases/download/v0.4.0/ko_${{ matrix.ko_version }}_Darwin_x86_64.tar.gz
+        wget -O ko.tar.gz https://github.com/google/ko/releases/download/v${{ matrix.ko_version }}/ko_${{ matrix.ko_version }}_Darwin_x86_64.tar.gz
         sudo tar -xvf ko.tar.gz -C /usr/local/bin/
 
     - name: Install Kompose
@@ -52,13 +53,6 @@ jobs:
     - name: Install Docker
       run: |
         brew install docker
-
-    - name: Install GCloud and configure
-      run: |
-        wget -O gcloud.tar.gz https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-${{ matrix.gcloud_sdk_version }}-darwin-x86_64.tar.gz
-        tar -xvf gcloud.tar.gz -C ${HOME}
-        CLOUDSDK_PYTHON="python2.7" ${HOME}/google-cloud-sdk/install.sh --usage-reporting=false --bash-completion=false --disable-installation-options
-        echo "${HOME}/google-cloud-sdk/bin" >> $GITHUB_PATH
 
     - name: Install Kubectl
       run: |
@@ -82,14 +76,14 @@ jobs:
 
     - name: Install Minikube and start cluster
       run: |
-        curl -Lo minikube https://storage.googleapis.com/minikube/releases/v${{ matrix.minikube_version }}/minikube-darwin-amd64
+        if [ "${{ matrix.minikube_version }}" = "latest" ]; then
+          curl -Lo minikube https://storage.googleapis.com/minikube/latest/minikube-darwin-amd64
+        else
+          curl -Lo minikube https://storage.googleapis.com/minikube/releases/v${{ matrix.minikube_version }}/minikube-darwin-amd64
+        fi
         sudo install minikube /usr/local/bin/minikube
         minikube start --profile=minikube --driver=virtualbox
-        eval $(minikube docker-env --profile=minikube)
-        echo DOCKER_TLS_VERIFY=${DOCKER_TLS_VERIFY} >> $GITHUB_ENV
-        echo DOCKER_HOST=${DOCKER_HOST} >> $GITHUB_ENV
-        echo DOCKER_CERT_PATH=${DOCKER_CERT_PATH} >> $GITHUB_ENV
-        echo MINIKUBE_ACTIVE_DOCKERD=${MINIKUBE_ACTIVE_DOCKERD} >> $GITHUB_ENV
+        minikube docker-env --profile=minikube --shell=none >> $GITHUB_ENV
 
     - name: Install Skaffold release binary
       run: |
