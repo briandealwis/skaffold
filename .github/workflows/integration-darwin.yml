@@ -74,7 +74,6 @@ jobs:
         tar -xvf gcloud.tar.gz -C ${HOME}
         CLOUDSDK_PYTHON="python3" ${HOME}/google-cloud-sdk/install.sh --usage-reporting=false --bash-completion=false --disable-installation-options
         echo "${HOME}/google-cloud-sdk/bin" >> $GITHUB_PATH
-        gcloud version
 
     - name: Install Kubectl
       run: |
