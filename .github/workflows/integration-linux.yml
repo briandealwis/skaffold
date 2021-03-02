@@ -55,16 +55,16 @@ jobs:
 
     - name: Install Kompose
       run: |
-        curl -Lo kompose https://github.com/kubernetes/kompose/releases/download/v${{ matrix.kompose_version }}/kompose-linux-amd64 && chmod +x kompose
-        sudo mv kompose /usr/local/bin/
+        curl -Lo kompose https://github.com/kubernetes/kompose/releases/download/v${{ matrix.kompose_version }}/kompose-linux-amd64
+        sudo install kompose /usr/local/bin/
 
     - name: Configure GCloud with Docker
       run:  sudo gcloud auth configure-docker
 
     - name: Install Container Structure Test
       run: |
-        curl -Lo container-structure-test https://storage.googleapis.com/container-structure-test/v${{ matrix.container_structure_tests_version }}/container-structure-test-linux-amd64 && chmod +x container-structure-test
-        sudo mv container-structure-test /usr/local/bin/
+        curl -Lo container-structure-test https://storage.googleapis.com/container-structure-test/v${{ matrix.container_structure_tests_version }}/container-structure-test-linux-amd64
+        sudo install container-structure-test /usr/local/bin/
 
     - name: Setup other files and permissions
       run: |
@@ -78,9 +78,9 @@ jobs:
     - name: Install Minikube and start cluster
       run: |
         if [ "${{ matrix.minikube_version }}" = "latest" ]; then
-          curl -Lo minikube https://storage.googleapis.com/minikube/latest/minikube-darwin-amd64
+          curl -Lo minikube https://storage.googleapis.com/minikube/latest/minikube-linux-amd64
         else
-          curl -Lo minikube https://storage.googleapis.com/minikube/releases/v${{ matrix.minikube_version }}/minikube-darwin-amd64
+          curl -Lo minikube https://storage.googleapis.com/minikube/releases/v${{ matrix.minikube_version }}/minikube-linux-amd64
         fi
         sudo install minikube /usr/local/bin/minikube
         minikube start --profile=minikube --driver=docker --interactive=false
