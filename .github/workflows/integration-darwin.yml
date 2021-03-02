@@ -104,8 +104,7 @@ jobs:
           curl -Lo minikube https://storage.googleapis.com/minikube/releases/v${{ matrix.minikube_version }}/minikube-darwin-amd64
         fi
         sudo install minikube /usr/local/bin/minikube
-        minikube start --profile=minikube --driver=virtualbox
-        minikube docker-env --profile=minikube --shell=none >> $GITHUB_ENV
+        minikube start --profile=minikube --driver=virtualbox --interactive=false
 
     - name: Install Skaffold release binary
       run: |
