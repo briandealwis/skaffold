@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    name: Release binary integration tests
+    name: latest binary integration tests on linux
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -17,7 +17,7 @@ jobs:
         ko_version: [0.4.0]
         kompose_version: [1.21.0]
         container_structure_tests_version: [1.8.0]
-        minikube_version: [1.18.0,latest]
+        minikube_version: [latest]
         integration_test_partitions: [0, 1, 2, 3]
     steps:
 
