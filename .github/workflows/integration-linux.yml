@@ -17,11 +17,11 @@ jobs:
     strategy:
       matrix:
         # <https://github.com/actions/virtual-environments>
-        # pre-installed on linux: bazel, helm, gcloud-sdk, gradle, maven
-        kustomize_version: [3.5.4]
-        ko_version: [0.4.0]
-        kompose_version: [1.21.0]
-        container_structure_tests_version: [1.8.0]
+        # pre-installed on linux: bazel, docker, helm, gcloud-sdk, gradle, kubectl, maven, minikube(!)
+        kustomize_version: [3.8.10]
+        ko_version: [0.8.0]
+        kompose_version: [1.22.0]
+        container_structure_tests_version: [1.10.0]
         minikube_version: [latest]
         integration_test_partitions: [0, 1, 2, 3]
     steps:
@@ -77,7 +77,11 @@ jobs:
 
     - name: Install Minikube and start cluster
       run: |
-        curl -Lo minikube https://storage.googleapis.com/minikube/releases/v${{ matrix.minikube_version }}/minikube-linux-amd64
+        if [ "${{ matrix.minikube_version }}" = "latest" ]; then
+          curl -Lo minikube https://storage.googleapis.com/minikube/latest/minikube-darwin-amd64
+        else
+          curl -Lo minikube https://storage.googleapis.com/minikube/releases/v${{ matrix.minikube_version }}/minikube-darwin-amd64
+        fi
         sudo install minikube /usr/local/bin/minikube
         minikube start --profile=minikube --driver=docker
 
