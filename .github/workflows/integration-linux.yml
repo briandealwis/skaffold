@@ -3,7 +3,12 @@ name: nightly integration (linux)
 on:
   schedule:
   - cron: "0 10 * * *"
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      skaffold_commit:
+        description: Use Skaffold binary for commit or latest
+        default: latest
+        required: false
 
 jobs:
   build:
@@ -30,9 +35,13 @@ jobs:
     - name: Check out code into the Go module directory
       uses: actions/checkout@v2
 
-    - name: Skaffold binary version
+    - name: Skaffold binary version 
       run: |
-        echo SKAFFOLD_VERSION="$(git log --format="%H" -n 1)" >> $GITHUB_ENV
+        if [ -n "${{ github.event.inputs.skaffold_commit }}" ]; then
+          echo SKAFFOLD_VERSION="${{ github.event.inputs.skaffold_commit }}" >> $GITHUB_ENV
+        else
+          echo SKAFFOLD_VERSION="$(git log --format="%H" -n 1)" >> $GITHUB_ENV
+        fi
 
     - name: Install Kustomize
       run: |
@@ -81,5 +90,6 @@ jobs:
       env:
         TOKEN: ${{ secrets.TOKEN }}
       run: |
+        echo "skaffold version: $(skaffold version)"
         skaffold config set --global collect-metrics false
         sudo IT_PARTITION=${{ matrix.integration_test_partitions }} make integration-tests
